@@ -5,6 +5,7 @@ Projeto: página de vendas estática do Devocional BPA, de Luís Paulo Gandara. 
 ## Como o projeto funciona
 - Tudo está em `index.html` (HTML, CSS e JavaScript juntos) e em `img/`. Não há build, framework nem dependências. Não adicione nenhum.
 - Preço, link do checkout, Pixel da Meta e Google Analytics ficam no bloco `window.BPA` no topo do `index.html`. Mude sempre por ali, nunca espalhando valores pelo texto.
+- A API de Conversões fica em `functions/api/evento.js` (Cloudflare Pages Function). O token é o segredo `META_CAPI_TOKEN` da hospedagem: nunca escreva token no código nem no repositório.
 - O Pixel também está numa linha `<noscript>` logo após `<body>`; ao trocar o ID, troque nos dois lugares.
 
 ## Regras de texto e design

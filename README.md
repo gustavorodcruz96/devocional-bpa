@@ -26,9 +26,14 @@ window.BPA = {
 - **checkout**: link do checkout da Kiwify. Todos os botões da página vão para ele. As UTMs que chegarem na página (`?utm_source=...`) são repassadas para o checkout.
 - **precoDe / precoPor**: o preço riscado e o preço da oferta. Mudam em todos os lugares da página de uma vez. A etiqueta "Economize R$ 20" e o ",00" ficam escritos no texto da seção da oferta: se mudar o preço, procure "Economize" e ajuste também.
 - **metaPixelId**: ID do Pixel da Meta, só os números. A página dispara `PageView`, `ViewContent` e, no clique para o checkout, `InitiateCheckout`. O mesmo ID também aparece numa linha `<noscript>` logo depois de `<body>`: se trocar o Pixel, troque nos dois lugares.
+- **API de Conversões da Meta**: além do Pixel no navegador, cada evento (PageView, ViewContent e InitiateCheckout) também vai para a Meta pelo servidor, em `functions/api/evento.js`, com o mesmo `event_id` para a Meta não contar duas vezes. O token fica guardado como segredo `META_CAPI_TOKEN` na hospedagem (Cloudflare Pages), nunca no código. Se trocar o Pixel, troque também o `PIXEL` nesse arquivo.
 - **gaId**: ID do Google Analytics 4 (`G-XXXXXXX`). Vazio = desligado.
 
-## Como publicar na Hostinger
+## Onde o site está publicado
+
+O domínio `devocionalbpa.com.br` aponta para o Cloudflare Pages (DNS na Cloudflare). A Seekgrow publica as atualizações: depois de enviar a alteração para o GitHub, avise que ela é publicada. A pasta `functions/` só funciona no Cloudflare Pages.
+
+## Como publicar na Hostinger (alternativa antiga)
 
 **Opção 1, manual (mais simples):** no hPanel, abra o Gerenciador de Arquivos do domínio `devocionalbpa.com.br`, entre em `public_html` e envie `index.html` e a pasta `img/`, substituindo os arquivos antigos.
 

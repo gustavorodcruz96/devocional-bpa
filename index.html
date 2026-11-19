@@ -517,6 +517,16 @@ footer a{color:var(--cinza)}
 <script>
 (function(){
   var c = window.BPA;
+  /* Pixel no navegador + API de Conversões no servidor (/api/evento), com o mesmo event_id para a Meta deduplicar */
+  function ck(n){var m=document.cookie.match('(?:^|; )'+n+'=([^;]*)');return m?decodeURIComponent(m[1]):''}
+  function evento(nome,dados){
+    if(!c.metaPixelId) return;
+    var id=nome+'.'+Date.now()+'.'+Math.random().toString(36).slice(2,10);
+    if(window.fbq) fbq('track',nome,dados||{},{eventID:id});
+    var fbc=ck('_fbc'); var q=location.search.match(/[?&]fbclid=([^&]+)/); if(!fbc&&q) fbc='fb.1.'+Date.now()+'.'+q[1];
+    var corpo=JSON.stringify({event_name:nome,event_id:id,url:location.href,fbp:ck('_fbp'),fbc:fbc,value:(dados&&dados.value)||0});
+    try{ if(!(navigator.sendBeacon&&navigator.sendBeacon('/api/evento',new Blob([corpo],{type:'application/json'})))) fetch('/api/evento',{method:'POST',body:corpo,headers:{'Content-Type':'application/json'},keepalive:true}); }catch(e){}
+  }
   document.querySelectorAll('[data-de]').forEach(function(e){e.textContent=c.precoDe});
   document.querySelectorAll('[data-por]').forEach(function(e){e.textContent=c.precoPor});
   // repassa UTMs da página para o checkout
@@ -525,7 +535,7 @@ footer a{color:var(--cinza)}
   document.querySelectorAll('[data-checkout]').forEach(function(a){
     a.href = url;
     a.addEventListener('click',function(){
-      if(window.fbq) fbq('track','InitiateCheckout',{value:Number(c.precoPor),currency:'BRL'});
+      evento('InitiateCheckout',{value:Number(c.precoPor),currency:'BRL'});
       if(window.gtag) gtag('event','begin_checkout',{value:Number(c.precoPor),currency:'BRL'});
     });
   });
@@ -540,7 +550,7 @@ footer a{color:var(--cinza)}
   // Pixel da Meta
   if(c.metaPixelId){
     !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init', c.metaPixelId); fbq('track','PageView'); fbq('track','ViewContent',{content_name:'Devocional BPA',value:Number(c.precoPor),currency:'BRL'});
+    fbq('init', c.metaPixelId); evento('PageView',{}); evento('ViewContent',{content_name:'Devocional BPA',value:Number(c.precoPor),currency:'BRL'});
   }
   // Google Analytics 4
   if(c.gaId){
